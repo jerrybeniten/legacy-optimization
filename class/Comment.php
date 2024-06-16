@@ -2,52 +2,90 @@
 
 class Comment
 {
-	protected $id, $body, $createdAt, $newsId;
+	protected $id;
+	protected $body;
+	protected $createdAt;
+	protected $newsId;
 
-	public function setId($id)
+	/**
+	 * @param int $id
+	 * @return Comment
+	 */
+	public function setId(int $id): Comment
 	{
 		$this->id = $id;
-
 		return $this;
 	}
 
-	public function getId()
+	/**
+	 * @return int|null
+	 */
+	public function getId(): ?int
 	{
 		return $this->id;
 	}
-	public function setBody($body)
+
+	/**
+	 * @param string $body
+	 * @return Comment
+	 */
+	public function setBody(string $body): Comment
 	{
 		$this->body = $body;
-
 		return $this;
 	}
 
-	public function getBody()
+	/**
+	 * @return string|null
+	 */
+	public function getBody(): ?string
 	{
 		return $this->body;
 	}
 
-	public function setCreatedAt($createdAt)
+	/**
+	 * @param string $createdAt
+	 * @return Comment
+	 */
+	public function setCreatedAt(string $createdAt): Comment
 	{
 		$this->createdAt = $createdAt;
-
 		return $this;
 	}
 
-	public function getCreatedAt()
+	/**
+	 * @return string|null
+	 */
+	public function getCreatedAt(): ?string
 	{
 		return $this->createdAt;
 	}
 
-	public function getNewsId()
+	/**
+	 * @return int|null
+	 */
+	public function getNewsId(): ?int
 	{
 		return $this->newsId;
 	}
 
-	public function setNewsId($newsId)
+	/**
+	 * @param int $newsId
+	 * @return Comment
+	 */
+	public function setNewsId(int $newsId): Comment
 	{
 		$this->newsId = $newsId;
-
 		return $this;
 	}
 }
+
+/*
+	Summary of Changes:
+
+	1.	Added PHPDoc comments to each method to describe parameters, return types, and purpose.
+	2. 	Used type hinting in method signatures (int, string, ?int, ?string) to specify expected
+		parameter and return types, improving code clarity and reliability.
+	3. 	Maintained the basic structure and functionality of the Comment class without altering
+		its core purpose.
+*/

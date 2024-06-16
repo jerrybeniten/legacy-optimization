@@ -2,52 +2,60 @@
 
 class CommentManager
 {
-	private static $instance = null;
+    private static $instance = null;
+    private $db;
 
-	private function __construct()
-	{
-		require_once(ROOT . '/utils/DB.php');
-		require_once(ROOT . '/class/Comment.php');
-	}
+    // Private constructor to prevent direct instantiation
+    private function __construct()
+    {
+        // Initialize database connection
+        $this->db = DB::getInstance();
+        require_once(ROOT . '/class/Comment.php');
+    }
 
-	public static function getInstance()
-	{
-		if (null === self::$instance) {
-			$c = __CLASS__;
-			self::$instance = new $c;
-		}
-		return self::$instance;
-	}
+    // Get the singleton instance of CommentManager
+    public static function getInstance(): CommentManager
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
-	public function listComments()
-	{
-		$db = DB::getInstance();
-		$rows = $db->select('SELECT * FROM `comment`');
+    // Fetch all comments from the database
+    public function listComments(): array
+    {
+        $rows = $this->db->select('SELECT * FROM `comment`');
+        $comments = [];
 
-		$comments = [];
-		foreach($rows as $row) {
-			$n = new Comment();
-			$comments[] = $n->setId($row['id'])
-			  ->setBody($row['body'])
-			  ->setCreatedAt($row['created_at'])
-			  ->setNewsId($row['news_id']);
-		}
+        foreach ($rows as $row) {
+            $comment = new Comment();
+            $comment->setId($row['id'])
+                    ->setBody($row['body'])
+                    ->setCreatedAt($row['created_at'])
+                    ->setNewsId($row['news_id']);
 
-		return $comments;
-	}
+            $comments[] = $comment;
+        }
 
-	public function addCommentForNews($body, $newsId)
-	{
-		$db = DB::getInstance();
-		$sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES('". $body . "','" . date('Y-m-d') . "','" . $newsId . "')";
-		$db->exec($sql);
-		return $db->lastInsertId($sql);
-	}
+        return $comments;
+    }
 
-	public function deleteComment($id)
-	{
-		$db = DB::getInstance();
-		$sql = "DELETE FROM `comment` WHERE `id`=" . $id;
-		return $db->exec($sql);
-	}
+    // Add a comment for a specific news item
+    public function addCommentForNews(string $body, int $newsId): int
+    {
+        $sql = "INSERT INTO `comment` (`body`, `created_at`, `news_id`) VALUES (?, ?, ?)";
+        $params = [$body, date('Y-m-d'), $newsId];
+        $this->db->exec($sql, $params);
+
+        return $this->db->lastInsertId();
+    }
+
+    // Delete a comment by its ID
+    public function deleteComment(int $id): int
+    {
+        $sql = "DELETE FROM `comment` WHERE `id` = ?";
+        $params = [$id];
+        return $this->db->exec($sql, $params);
+    }
 }
